@@ -14,6 +14,7 @@ public class projectileControl : MonoBehaviour {
         player = Camera.main;
 
         Vector3 player_pos = player.transform.position;
+        player_pos.y -= 0.5f;
 
         Vector3 direction = (player_pos - transform.position).normalized;
         rb.velocity = direction * speed;
