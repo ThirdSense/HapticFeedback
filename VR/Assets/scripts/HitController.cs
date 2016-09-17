@@ -10,6 +10,7 @@ using System.Collections.Generic;
 
     private List<Vector3> motorList;
 
+    private float timeCounter;
 
     void Start()
     {
@@ -18,7 +19,9 @@ using System.Collections.Generic;
             new Vector3(3, 4, 5),
             new Vector3(4, 5, 6),
         };
-        SpawnProjectile();
+
+        timeCounter = 0f;
+
     }
 
     void OnTriggerEnter(Collider col)
@@ -59,6 +62,7 @@ using System.Collections.Generic;
 
     void SpawnProjectile()
     {
+        Debug.Log("spawn?");
         Random.InitState((int)System.DateTime.Now.Ticks);
 
         float x = Random.Range(-10f, 10f);
@@ -70,6 +74,12 @@ using System.Collections.Generic;
     }
     void Update()
     {
+        Debug.Log("TES");
+        timeCounter += Time.deltaTime;
+        if(timeCounter % 3.0f < 0.5f)
+        {
+            SpawnProjectile();
+        }
     }
 
 
