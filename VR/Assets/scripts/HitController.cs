@@ -12,12 +12,12 @@ using System.Collections;
         SpawnProjectile();
     }
 
-    void OntriggerEnter(Collision other)
+    void OnCollisionEnter(Collision col)
     {
         Debug.Log("Hit");
-        Destroy(other.gameObject);
-        SpawnProjectile();            
+        Destroy(col.gameObject);
     }
+
 
     void SpawnProjectile()
     {

@@ -19,8 +19,7 @@ public class projectileControl : MonoBehaviour {
         rb.velocity = direction * speed;
     }
 
-    void OntriggerEnter(Collision col)
-    {
-        Debug.Log("test");
-    }
+
+
+
 }
