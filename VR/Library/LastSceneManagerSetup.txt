@@ -1,4 +1,4 @@
 sceneSetups:
-- path: C:/Users/MLH-Admin/Documents/TestKinect/Assets/AvatarsDemo/KinectAvatarsDemo.unity
+- path: Assets/scences/mainScene.unity
   isLoaded: 1
   isActive: 1

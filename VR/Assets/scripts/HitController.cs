@@ -5,15 +5,20 @@ using System.Collections.Generic;
     public class HitController : MonoBehaviour {
 
     public Transform projectile;
+    public Camera player;
+    public int dof;
 
     private Vector3 spawn_pos;
-
     private List<Vector3> motorList;
 
     private float timeCounter;
 
+    private float spawnFreq = 2.0f; // Time to spawn 1 projectile
+    private float contactThresAngle = 7.5f;
+
     void Start()
     {
+        Random.InitState((int)System.DateTime.Now.Ticks);
         motorList = new List<Vector3> {
             new Vector3(2, 3, 4),
             new Vector3(3, 4, 5),
@@ -23,66 +28,65 @@ using System.Collections.Generic;
         timeCounter = 0f;
 
     }
-
-    void OnTriggerEnter(Collider col)
-    {
-        Debug.Log("trigger");
-        Debug.Log(col.gameObject);
-    }
+   
     void OnCollisionEnter(Collision col)
     {
-        Debug.Log(col.gameObject);
         if(col.gameObject.CompareTag("projectile"))
         {
-            Debug.Log("Hit");
-
             float min_dist = 9999f;
             int motorIndex = -1;
 
+            Vector3 player_pos = player.transform.position;
+
             foreach (ContactPoint contact in col.contacts)
             {
-                int counter = 0;
-                foreach (Vector3 vec in motorList)
+                float angle = Vector3.Angle(contact.point, player_pos); //  Mathf.Atan2(player_pos.z - contact.point.z, player_pos.x - contact.point.x);
+                if (angle > contactThresAngle)
                 {
-                    float dist = Vector3.Distance(contact.point, vec);
-                    if (dist < min_dist)
+                    Debug.Log("HIT" + angle.ToString() + " " + contact.point + " " + player_pos);
+                    int counter = 0;
+                    foreach (Vector3 vec in motorList)
                     {
-                        min_dist = dist;
-                        motorIndex = counter;
+                        float dist = Vector3.Distance(contact.point, vec);
+                        if (dist < min_dist)
+                        {
+                            min_dist = dist;
+                            motorIndex = counter;
+                        }
+                        ++counter;
                     }
-                    ++counter;
                 }
+                
             }
 
-            Debug.Log("Activate Motor " + motorIndex.ToString() + " " + min_dist.ToString());
-            // activeMotor(index, min_dist)
+            // activeMotor(index, min_dist) [Note you can place this in a couple places depending on wanted behaviour]
             Destroy(col.gameObject);
         }
     }
 
     void SpawnProjectile()
     {
-        Debug.Log("spawn?");
-        Random.InitState((int)System.DateTime.Now.Ticks);
-
-        float x = Random.Range(-10f, 10f);
+        Vector3 player_pos = player.transform.position;
+        float deg = 0.25f * Mathf.PI * Random.Range(-100f, 100f) / 100f;
+        float hypo = 5f + Random.Range(0f, 20f);
+        float x = player_pos.x + Mathf.Sin(deg) * hypo;
         float y = Random.Range(3f, 4f);
-        float z = Random.Range(3f, 30f);
+        float z = player_pos.z + Mathf.Cos(deg) * hypo;
+
         spawn_pos = new Vector3(x, y, z);
 
         Object.Instantiate(projectile, spawn_pos, Quaternion.identity);
     }
+
     void Update()
     {
-        Debug.Log("TES");
         timeCounter += Time.deltaTime;
-        if(timeCounter % 3.0f < 0.5f)
+        if(timeCounter > spawnFreq)
         {
             SpawnProjectile();
+            timeCounter = 0f;
         }
     }
-
-
 }
 
 
